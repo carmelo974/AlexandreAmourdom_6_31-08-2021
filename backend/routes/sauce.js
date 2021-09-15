@@ -12,12 +12,15 @@ router.post("/", auth, multer, sauceCtrl.createSauce);
 router.put("/:id", auth, multer, sauceCtrl.modifySauce);
 
 // suppression d'une sauce
-router.delete("/", auth, sauceCtrl.deleteSauce);
+router.delete("/:id", auth, sauceCtrl.deleteSauce);
 
 // récupération d'une sauce spécifique
 router.get("/:id", auth, sauceCtrl.getOneSauce);
 
 // récupération de la liste de Sauces pour l'envoyer dans la BD
 router.get("/", auth, sauceCtrl.getAllSauces);
+
+// route pour like/dislike
+router.post("/:id/like", auth, sauceCtrl.likeDislike);
 
 module.exports = router;

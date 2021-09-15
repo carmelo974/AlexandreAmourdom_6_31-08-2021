@@ -1,6 +1,6 @@
 //package http de node.js pour avoir les outils pour créer le serveur
 const http = require("http");
-const app = require("./app");
+const app = require("./app"); // import de app.js
 const cors = require("cors");
 app.use(cors());
 
@@ -16,9 +16,10 @@ const normalizePort = (val) => {
   }
   return false;
 };
+// fonction normalizePort renvoie un port valide 
 const port = normalizePort(process.env.PORT || "3000");
 app.set("port", port);
-
+// errorHandler recherche les erreurs et les gère pour enregistrment dans le server
 const errorHandler = (error) => {
   if (error.syscall !== "listen") {
     throw error;
@@ -40,10 +41,12 @@ const errorHandler = (error) => {
   }
 };
 
+// const server pour les appels requete et response
 const server = http.createServer(app);
-
-server.on("error", errorHandler);
-server.on("listening", () => {
+// server.on gère les erreurs si besoin
+server.on("error", errorHandler); 
+// écouteur d'évènement qui consigne le port ou le canal sur lequel le server s'exécute dans la console
+server.on("listening", () => { 
   const address = server.address();
   const bind = typeof address === "string" ? "pipe " + address : "port " + port;
   console.log("Listening on " + bind);
