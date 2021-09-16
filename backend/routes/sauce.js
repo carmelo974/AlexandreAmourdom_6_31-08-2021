@@ -5,6 +5,8 @@ const sauceCtrl = require("../controllers/sauce");
 const auth = require("../middleware/auth");
 const multer = require("../middleware/multer-config");
 
+// const sauceValidation = require("../middleware/sauceValidation");
+
 // enregistrement des Sauces dans la BD
 router.post("/", auth, multer, sauceCtrl.createSauce);
 

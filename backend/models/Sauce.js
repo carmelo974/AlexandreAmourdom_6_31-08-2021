@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const sauceValidation = require("../middleware/sauceValidation");
 
 // création du shema mongoose pour que les données dans la base MongoDB soit conforme au schéma "sauceSchema"
 const sauceSchema = mongoose.Schema({
@@ -10,8 +9,8 @@ const sauceSchema = mongoose.Schema({
   mainPepper: { type: String, required: true },
   imageUrl: { type: String, required: true },
   heat: { type: Number, required: true },
-  likes: { type: Number, required: true },
-  dislikes: { type: Number, required: true },
+  likes: { type: Number, defaultValue: 0 },
+  dislikes: { type: Number, defaultValue: 0 },
   usersLiked: { type: [String], required: true },
   usersDisliked: { type: [String], required: true },
 });

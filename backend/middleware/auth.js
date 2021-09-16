@@ -1,10 +1,12 @@
 // middleware permettant de protéger les routes et de vérifier si l'utilisateur est authentifié pour l'envoi des requêtes
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
+
 
 module.exports = (req, res, next) => {
   try {
-    // récupération du token dans le header de la requête 
-    const token = req.headers.authorization.split(" ")[1];
+    // récupération du token dans le header de la requête
+    const token = req.headers.authorization.split("")[1];
     const decodedToken = jwt.verify(token, "RANDOM_TOKEN_SECRET");
     // le userId correspond au userID dans le token
     const userId = decodedToken.userId;

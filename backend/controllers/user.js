@@ -4,10 +4,13 @@ const bcrypt = require("bcrypt");
 // jsonwebtoken atttribut un token à l'utilisateur lors de sa connexion
 const jwt = require("jsonwebtoken");
 
+// const hash = require("hash.js")
+
 const User = require("../models/User");
 
 // sauvegarde un nouvel utilisateur
 exports.signup = (req, res, next) => {
+  // const emailHash = hash.sha256().update(req.body.email).digest("hex")
   bcrypt
   // recuperation du hash de password et salte (10) correspond au nombre d'execution de l'algorithme de hashage
     .hash(req.body.password, 10)
@@ -29,6 +32,7 @@ exports.signup = (req, res, next) => {
 
 // connexion d'un utilisateur, si le mdp est valide envoi d'un token 
 exports.login = (req, res, next) => {
+  // const emailHash = hash.sha256().update(req.body.email).digest("hex")
   // recherche de l'utilisateur ds la BD 
   User.findOne({ email: req.body.email })
     .then((user) => {
