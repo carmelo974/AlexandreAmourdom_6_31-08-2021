@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const sanitizePlugin = require("express-mongo-sanitize");
 
 // création du shema mongoose pour que les données dans la base MongoDB soit conforme au schéma "sauceSchema"
 const sauceSchema = mongoose.Schema({
@@ -14,6 +15,8 @@ const sauceSchema = mongoose.Schema({
   usersLiked: { type: [String], required: true },
   usersDisliked: { type: [String], required: true },
 });
+
+sauceSchema.plugin(sanitizePlugin)
 
 // exportation du schéma de données pour intéragir avec l'application
 module.exports = mongoose.model("Sauce", sauceSchema);

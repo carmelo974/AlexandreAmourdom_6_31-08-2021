@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const uniqueValidator = require("mongoose-unique-validator");
+const sanitizePlugin = require("express-mongo-sanitize");
 
 const userSchema = mongoose.Schema({
   email: { type: String, required: true, unique: true },
@@ -9,5 +10,6 @@ const userSchema = mongoose.Schema({
 
 // éviter d'avoir plusieurs users avec la même adresse mail
 userSchema.plugin(uniqueValidator);
+userSchema.plugin(sanitizePlugin);
 
 module.exports = mongoose.model("User", userSchema);

@@ -1,14 +1,12 @@
-// logique métier 
+// logique métier
 // récupération du "models" de sauce
 const Sauce = require("../models/Sauce");
 // fs "file system" permet de créer, lire, écrire, copier, renommer, supprimer des fichiers
 const fs = require("fs");
 
-
-
 // permet de créer une nouvelle sauce
 exports.createSauce = (req, res, next) => {
-  // les données envoyées par le front-end sont stockées sous la forme form-data dans une variable 
+  // les données envoyées par le front-end sont stockées sous la forme form-data dans une variable
   const sauceObject = JSON.parse(req.body.sauce);
   // suppression de l'id généré par le front-end, mongooseDB crée l'id lors de la création de la sauce
   delete sauceObject._id;
@@ -22,16 +20,18 @@ exports.createSauce = (req, res, next) => {
     likes: 0,
     dislikes: 0,
     usersLiked: [" "],
-    usersDisLiked: [" "],
+    usersDisliked: [" "],
   });
-  // sauvegarde de la sauce dans la BD
-  sauce
-    .save()
-    .then(() => res.status(201).json({ message: "Sauce enregistrée" }))
-    .catch((error) => res.status(400).json({ error }));
+  if (sauceObject.name.length > 3 && sauceObject.manufacturer.length > 3) {
+    // sauvegarde de la sauce dans la BD
+    sauce
+      .save()
+      .then(() => res.status(201).json({ message: "Sauce enregistrée" }))
+      .catch((error) => res.status(400).json({ error }));
+  } else {
+    res.status(400).json({ message: " formulaire incorrect" });
+  }
 };
-
-
 
 exports.modifySauce = (req, res, next) => {
   const sauceObject = req.file
@@ -42,18 +42,25 @@ exports.modifySauce = (req, res, next) => {
         }`,
       }
     : { ...req.body };
-  Sauce.updateOne(
-    { _id: req.params.id },
-    { ...sauceObject, _id: req.params.id }
-  )
-    .then(() => res.status(200).json({ message: "Sauce modifié !" }))
-    .catch((error) => res.status(400).json({ error }));
+  if (sauceObject.name.length > 3 && sauceObject.manufacturer.length > 3) {
+    Sauce.updateOne(
+      { _id: req.params.id },
+      { ...sauceObject, _id: req.params.id }
+    )
+      .then(() => {
+        res.status(200).json({ message: "Sauce modifié !" });
+      })
+      .catch((error) => {
+        res.status(400).json({ error });
+      });
+  } else {
+    res.status(400).json({ message: " formulaire incorrect" });
+  }
 };
-
 
 // supression de la sauce
 exports.deleteSauce = (req, res, next) => {
-  // avant de supprimer l'objet, récupération de l'url de l'image 
+  // avant de supprimer l'objet, récupération de l'url de l'image
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => {
       // le split permet de récupèrer le nom du fichier
@@ -70,15 +77,13 @@ exports.deleteSauce = (req, res, next) => {
     .catch((error) => res.status(500).json({ error }));
 };
 
-
-// permet de récupérer une seule sauce 
+// permet de récupérer une seule sauce
 exports.getOneSauce = (req, res, next) => {
   // findOne permet de vérifier si l'id de la sauce et le même que dans les paramètres de requête
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => res.status(200).json(sauce))
     .catch((error) => res.status(404).json({ error }));
 };
-
 
 // recupère toutes les sauces
 exports.getAllSauces = (req, res, next) => {
@@ -88,10 +93,8 @@ exports.getAllSauces = (req, res, next) => {
     .catch((error) => res.status(400).json({ error }));
 };
 
-
-
 //controller permettant de liker/disliker une sauce
- exports.likeDislike = (req, res, next) => {
+exports.likeDislike = (req, res, next) => {
   let like = req.body.like;
   let userId = req.body.userId;
   let sauceId = req.params.id;
@@ -105,7 +108,7 @@ exports.getAllSauces = (req, res, next) => {
       .then(() => res.status(200).json({ message: "J'aime" }))
       .catch((error) => res.status(400).json({ error }));
   }
-  
+
   //pour annuler un like/dislike
   if (like === 0)
     Sauce.findOne({
@@ -170,26 +173,30 @@ exports.getAllSauces = (req, res, next) => {
           error,
         })
       );
-      if (like === -1) {
-        Sauce.updateOne( // S'il s'agit d'un dislike
-            {
-              _id: sauceId
-            }, {
-              $push: {
-                usersDisliked: userId
-              },
-              $inc: {
-                dislikes: +1
-              }, // On incrémente de 1
-            }
-          )
-          .then(() => {
-            res.status(200).json({
-              message: 'Dislike ajouté !'
-            })
-          })
-          .catch((error) => res.status(400).json({
-            error
-          }))
+  if (like === -1) {
+    Sauce.updateOne(
+      // S'il s'agit d'un dislike
+      {
+        _id: sauceId,
+      },
+      {
+        $push: {
+          usersDisliked: userId,
+        },
+        $inc: {
+          dislikes: +1,
+        }, // On incrémente de 1
       }
+    )
+      .then(() => {
+        res.status(200).json({
+          message: "Dislike ajouté !",
+        });
+      })
+      .catch((error) =>
+        res.status(400).json({
+          error,
+        })
+      );
+  }
 };
