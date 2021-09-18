@@ -22,7 +22,11 @@ exports.createSauce = (req, res, next) => {
     usersLiked: [" "],
     usersDisliked: [" "],
   });
-  if (sauceObject.name.length > 3 && sauceObject.manufacturer.length > 3) {
+  if (
+    sauceObject.name.length > 3 &&
+    sauceObject.manufacturer.length > 3 &&
+    sauceObject.description.length > 5
+  ) {
     // sauvegarde de la sauce dans la BD
     sauce
       .save()
@@ -34,15 +38,34 @@ exports.createSauce = (req, res, next) => {
 };
 
 exports.modifySauce = (req, res, next) => {
-  const sauceObject = req.file
-    ? {
-        ...JSON.parse(req.body.sauce),
-        imageUrl: `${req.protocol}://${req.get("host")}/images/${
-          req.file.filename
-        }`,
-      }
-    : { ...req.body };
-  if (sauceObject.name.length > 3 && sauceObject.manufacturer.length > 3) {
+  const sauceObject = {};
+  req.file ? (
+    // Si la modification contient une image 
+    Sauce.findOne({
+      _id: req.params.id
+    }).then((sauce) => {
+      // On supprime l'ancienne image du serveur
+      const filename = sauce.imageUrl.split('/images/')[1]
+      fs.unlink(`images/${filename}`)
+    }),
+    sauceObject = {
+      // On modifie les données et on ajoute la nouvelle image
+      ...JSON.parse(req.body.sauce),
+      imageUrl: `${req.protocol}://${req.get('host')}/images/${
+        req.file.filename
+      }`,
+    }
+  ) : ( 
+    // Si la modification ne contient pas de nouvelle image
+    sauceObject = {
+      ...req.body
+    }
+  )
+  if (
+    sauceObject.name.length > 3 &&
+    sauceObject.manufacturer.length > 3 &&
+    sauceObject.description.length > 5
+  ) {
     Sauce.updateOne(
       { _id: req.params.id },
       { ...sauceObject, _id: req.params.id }

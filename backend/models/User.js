@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+// mongoose-unique-validator pré-valide les info avant enregistrement
 const uniqueValidator = require("mongoose-unique-validator");
 const sanitizePlugin = require("express-mongo-sanitize");
 

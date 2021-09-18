@@ -5,6 +5,7 @@ const express = require("express");
 const helmet = require("helmet");
 const mongoose = require("mongoose");
 
+// donne accés aux chemins dans nos fichiers
 const path = require("path");
 
 const sauceRoutes = require("./routes/sauce");
@@ -22,6 +23,7 @@ mongoose
   .catch(() => console.log("Connexion à MongoDB échouée !"));
 
 const app = express();
+
 // middleware Header gère les problèmes de sécurité comme CORS, cela permet à ttes les demandes de tte origine d'accéder à l'API
 app.use((req, res, next) => {
   // ressoures partagées depuis tte les origines

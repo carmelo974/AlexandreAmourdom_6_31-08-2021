@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+
+// désinfecte les chaines de manieres à etre utilisées en tte sécurité 
 const sanitizePlugin = require("express-mongo-sanitize");
 
 // création du shema mongoose pour que les données dans la base MongoDB soit conforme au schéma "sauceSchema"
